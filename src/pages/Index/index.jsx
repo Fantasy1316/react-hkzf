@@ -108,7 +108,7 @@ const Index = (props) => {
           {swiper.map((item) => (
             <Swiper.Item key={item.id}>
               <div className='content'>
-                <img src={`http://192.168.31.148:8080${item.imgSrc}`} alt='' />
+                <img src={`http://172.16.0.112:8080${item.imgSrc}`} alt='' />
               </div>
             </Swiper.Item>
           ))}
@@ -139,7 +139,7 @@ const Index = (props) => {
                   <p className='item-left--title'>{item.title}</p>
                   <p className='item-left--desc'>{item.desc}</p>
                 </div>
-                <img className='item-right' src={`http://192.168.31.148:8080${item.imgSrc}`} alt={item.title} />
+                <img className='item-right' src={`http://172.16.0.112:8080${item.imgSrc}`} alt={item.title} />
               </div>
             )
           })}
@@ -152,7 +152,7 @@ const Index = (props) => {
           {news.map((item) => {
             return (
               <div className='item' key={item.id}>
-                <img className='item-img' src={`http://192.168.31.148:8080${item.imgSrc}`} alt='' />
+                <img className='item-img' src={`http://172.16.0.112:8080${item.imgSrc}`} alt='' />
                 <div className='item-info'>
                   <p className='item-info--title'>{item.title}</p>
                   <p className='item-info--footer'>

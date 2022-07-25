@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Toast } from 'antd-mobile'
 
 const service = axios.create({
-  baseURL: 'http://192.168.31.148:3000/api',
+  baseURL: 'http://172.16.0.112:3000/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'

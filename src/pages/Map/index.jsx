@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 import { areaMap, housesList } from '../..//api'
 import NavHeader from '../../components/NavHeader'
 import './index.scss'
 
 const Map = (props) => {
-  let map = null
+  const map = useRef(null)
   const [houses, setHouses] = useState([])
   const [show, setShow] = useState(false)
 
   // 初始化地图
-  const handleInitMap = () => {
+  const handleInitMap = useCallback(() => {
     const { lat, lng } = props.currentCity
     const newMap = new window.BMapGL.Map('container')
     const point = new window.BMapGL.Point(lng, lat)
@@ -25,9 +25,9 @@ const Map = (props) => {
       setShow(false)
     })
 
-    map = newMap
+    map.current = newMap
     renderOverlay(props.currentCity.value)
-  }
+  }, [props])
 
   // 获取地图覆盖物数据
   const renderOverlay = async (id) => {
@@ -42,7 +42,7 @@ const Map = (props) => {
   // 获取地图缩放值和行政
   const getTypeAndZoom = () => {
     let nextZoom, type
-    const zoom = map.getZoom()
+    const zoom = map.current.getZoom()
 
     if (zoom >= 10 && zoom < 12) {
       nextZoom = 13
@@ -102,10 +102,10 @@ const Map = (props) => {
     label.setStyle(labelStyle)
     label.addEventListener('click', () => {
       renderOverlay(id)
-      map.centerAndZoom(point, zoom)
-      map.clearOverlays()
+      map.current.centerAndZoom(point, zoom)
+      map.current.clearOverlays()
     })
-    map.addOverlay(label)
+    map.current.addOverlay(label)
   }
 
   // 创建方形覆盖物
@@ -135,14 +135,14 @@ const Map = (props) => {
     label.setStyle(labelStyle)
     label.addEventListener('click', (e) => {
       renderOverlay(id)
-      map.centerAndZoom(point, 16)
+      map.current.centerAndZoom(point, 16)
       getHousesList(id)
 
       // 获取地图移动偏移量
       const { clientX, clientY } = e.domEvent.changedTouches[0]
-      map.panBy(window.innerWidth / 2 - clientX, (window.innerHeight - 300) / 2 - clientY)
+      map.current.panBy(window.innerWidth / 2 - clientX, (window.innerHeight - 300) / 2 - clientY)
     })
-    map.addOverlay(label)
+    map.current.addOverlay(label)
   }
 
   // 获取房屋列表
@@ -170,7 +170,7 @@ const Map = (props) => {
           {houses.map((item) => {
             return (
               <div className='houses-list--item' key={item.houseCode}>
-                <img className='item-img' src={`http://192.168.31.148:8080${item.houseImg}`} alt='' />
+                <img className='item-img' src={`http://172.16.0.112:8080${item.houseImg}`} alt='' />
                 <div className='item-info'>
                   <p className='item-info--title'>{item.title}</p>
                   <p className='item-info--desc'>{item.desc}</p>
