@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Toast } from 'antd-mobile'
 import { List, AutoSizer } from 'react-virtualized'
 import { cityList, hotCityList } from '../../api'
@@ -45,11 +45,16 @@ const formatLetter = (letter) => {
   }
 }
 
-const CityList = (props) => {
+const CityList = () => {
   const [cityData, setCityData] = useState([])
   const [cityIndexData, setCityIndexData] = useState([])
   const [activeIndex, setActiveIndex] = useState(0)
   const listComponentRef = useRef(null)
+
+  const currentCity = useSelector((state) => {
+    return state.city
+  })
+  const dispatch = useDispatch()
 
   // 获取城市数据
   const getCityList = async () => {
@@ -63,7 +68,7 @@ const CityList = (props) => {
     cityFormatList['hot'] = hotResult.body
     cityFormatIndex.unshift('hot')
     // 插入当前城市数据
-    cityFormatList['#'] = [props.currentCity]
+    cityFormatList['#'] = [currentCity]
     cityFormatIndex.unshift('#')
 
     setCityData(cityFormatList)
@@ -97,12 +102,14 @@ const CityList = (props) => {
 
     const { label, value } = data
     const result = await getCityGeographical(label)
-    props.setCity({
-      label,
-      value,
-      default: false,
-      ...result
-    })
+    dispatch(
+      setCity({
+        label,
+        value,
+        default: false,
+        ...result
+      })
+    )
 
     Toast.show({ content: `城市已切换为 ${label}` })
   }
@@ -126,7 +133,6 @@ const CityList = (props) => {
         listComponentRef.current.measureAllRows()
       })
     }
-
     initData()
   }, [])
 
@@ -166,4 +172,4 @@ const CityList = (props) => {
   )
 }
 
-export default connect((state) => ({ currentCity: state.city }), { setCity })(CityList)
+export default CityList

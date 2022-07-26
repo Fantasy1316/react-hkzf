@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Swiper, Divider } from 'antd-mobile'
 import { CompassOutline, DownFill, SearchOutline } from 'antd-mobile-icons'
 import { setCity } from '../../redux/action/city'
@@ -36,24 +36,32 @@ const navList = [
   }
 ]
 
-const Index = (props) => {
+const Index = () => {
   const [swiper, setSwiper] = useState([{ id: '0', imgSrc: '', alt: '' }])
   const [groups, setGroups] = useState([])
   const [news, setNews] = useState([])
   const navigate = useNavigate()
 
+  const currentCity = useSelector((state) => {
+    console.log(state)
+    return state.city
+  })
+  const dispatch = useDispatch()
+
   // 获取当前城市信息
   const getCurrentCity = async () => {
-    if (!props.currentCity.default) return
+    if (!currentCity.default) return
     const city = new window.BMapGL.LocalCity()
     city.get(async (res) => {
       const { name, center } = res
       const result = await cityInfo({ name })
-      props.setCity({
-        ...result.body,
-        ...center,
-        default: false
-      })
+      dispatch(
+        setCity({
+          ...result.body,
+          ...center,
+          default: false
+        })
+      )
     })
   }
 
@@ -94,7 +102,7 @@ const Index = (props) => {
         <div className='search'>
           <div className='search-left'>
             <p className='search-left--place' onClick={() => handleNavigateChange('/citylist')}>
-              {props.currentCity.label} <DownFill style={{ position: 'relative', top: '-1px', fontSize: 12, color: '#ccc', fontWeight: 'lighter' }} />
+              {currentCity.label} <DownFill style={{ position: 'relative', top: '-1px', fontSize: 12, color: '#ccc', fontWeight: 'lighter' }} />
             </p>
             <Divider direction='vertical' />
             <p className='search-left--input'>
@@ -172,6 +180,4 @@ const Index = (props) => {
   )
 }
 
-export default connect((state) => ({ currentCity: state.city }), {
-  setCity
-})(Index)
+export default Index

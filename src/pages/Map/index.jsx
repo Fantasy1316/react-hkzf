@@ -1,17 +1,21 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { areaMap, housesList } from '../..//api'
 import NavHeader from '../../components/NavHeader'
 import './index.scss'
 
-const Map = (props) => {
+const Map = () => {
   const map = useRef(null)
   const [houses, setHouses] = useState([])
   const [show, setShow] = useState(false)
 
+  const currentCity = useSelector((state) => {
+    return state.city
+  })
+
   // 初始化地图
   const handleInitMap = useCallback(() => {
-    const { lat, lng } = props.currentCity
+    const { lat, lng } = currentCity
     const newMap = new window.BMapGL.Map('container')
     const point = new window.BMapGL.Point(lng, lat)
     newMap.centerAndZoom(point, 11)
@@ -26,8 +30,8 @@ const Map = (props) => {
     })
 
     map.current = newMap
-    renderOverlay(props.currentCity.value)
-  }, [props])
+    renderOverlay(currentCity.value)
+  }, [])
 
   // 获取地图覆盖物数据
   const renderOverlay = async (id) => {
@@ -197,4 +201,4 @@ const Map = (props) => {
   )
 }
 
-export default connect((state) => ({ currentCity: state.city }))(Map)
+export default Map
